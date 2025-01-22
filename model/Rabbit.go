@@ -21,8 +21,14 @@ func (r Rabbit) HasEmptyParams() bool {
 }
 
 func (r Rabbit) Connection() (*amqp.Connection, error) {
-	con, err := amqp.Dial(r.GetStringConnection())
-	return con, err
+	connectionString := r.GetStringConnection()
+	con, err := amqp.Dial(connectionString)
+	if err != nil {
+		log.Printf("Failed to connect to RabbitMQ: %s", err)
+		return nil, err
+	}
+	log.Println("Successfully connected to RabbitMQ")
+	return con, nil
 }
 
 func (r Rabbit) TestConnection() (bool, error) {
@@ -45,6 +51,18 @@ func (r Rabbit) SendMessage(job *Job, queue string, con *amqp.Connection) bool {
 		log.Fatalf("Channel error: %s", err)
 	}
 	defer ch.Close()
+
+	_, err = ch.QueueDeclare(
+		queue,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare queue: %s", err)
+	}
 
 	err = ch.Publish(
 		"",
