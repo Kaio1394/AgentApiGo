@@ -1,0 +1,7 @@
+info:
+  contact: {}
+  description: This is a sample API to demonstrate Swagger with Gin.
+  title: My API
+  version: "1.0"
+paths: {}
+swagger: "2.0"
