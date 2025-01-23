@@ -1,4 +1,21 @@
 basePath: /
+definitions:
+  model.Job:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - date
+    - description
+    - name
+    - priority
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -25,24 +42,48 @@ paths:
     post:
       consumes:
       - application/json
-      description: Endpoint para publicar dados
+      description: Publishes a job message to RabbitMQ with connection parameters
       parameters:
-      - description: Corpo da requisição
+      - description: RabbitMQ host
+        in: query
+        name: host
+        required: true
+        type: string
+      - description: RabbitMQ port
+        in: query
+        name: port
+        required: true
+        type: string
+      - description: RabbitMQ user
+        in: query
+        name: user
+        required: true
+        type: string
+      - description: RabbitMQ password
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: Job object to publish
         in: body
-        name: request
+        name: job
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/model.Job'
       produces:
       - application/json
       responses:
         "201":
-          description: Created
+          description: Publish success response
           schema:
             additionalProperties: true
             type: object
-      summary: Publicar algo
+        "400":
+          description: Error response
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Publish a job
       tags:
       - Publish
 swagger: "2.0"

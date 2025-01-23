@@ -34,7 +34,7 @@
         },
         "/publish": {
             "post": {
-                "description": "Endpoint para publicar dados",
+                "description": "Publishes a job message to RabbitMQ with connection parameters",
                 "consumes": [
                     "application/json"
                 ],
@@ -44,27 +44,86 @@
                 "tags": [
                     "Publish"
                 ],
-                "summary": "Publicar algo",
+                "summary": "Publish a job",
                 "parameters": [
                     {
-                        "description": "Corpo da requisição",
-                        "name": "request",
+                        "type": "string",
+                        "description": "RabbitMQ host",
+                        "name": "host",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ port",
+                        "name": "port",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ user",
+                        "name": "user",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ password",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Job object to publish",
+                        "name": "job",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Job"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "Publish success response",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Error response",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Job": {
+            "type": "object",
+            "required": [
+                "date",
+                "description",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
                 }
             }
         }

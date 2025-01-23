@@ -9,6 +9,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
+type IRabbit interface {
+	TestConnection() (bool, error)
+	HasEmptyParams() bool
+	SendMessage(job *Job, queue string, con *amqp.Connection) bool
+	GetStringConnection() string
+	Connection() (*amqp.Connection, error)
+}
+
 type Rabbit struct {
 	User     string
 	Password string

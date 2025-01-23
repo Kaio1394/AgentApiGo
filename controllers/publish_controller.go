@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"AgentApiGo/model"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -39,7 +38,9 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	rabbit_config := model.Rabbit{
+	var rabbit_config model.IRabbit
+
+	rabbit_config = model.Rabbit{
 		Host:     host,
 		Port:     uint32(port),
 		User:     user,
@@ -55,7 +56,11 @@ func Publish(c *gin.Context) {
 
 	con, err := rabbit_config.Connection()
 	if err != nil {
-		log.Fatal("Connection error!")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":            "Connection error.",
+			"ParamsConnection": rabbit_config,
+		})
+		return
 	}
 
 	rabbit_config.SendMessage(&job, "Job.Schedule.Test", con)
