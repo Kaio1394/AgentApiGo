@@ -1,7 +1,48 @@
+basePath: /
+host: localhost:8080
 info:
   contact: {}
   description: This is a sample API to demonstrate Swagger with Gin.
-  title: My API
+  title: AgentApiGo
   version: "1.0"
-paths: {}
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: Verifica se a API está ativa
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Ping endpoint
+      tags:
+      - Ping
+  /publish:
+    post:
+      consumes:
+      - application/json
+      description: Endpoint para publicar dados
+      parameters:
+      - description: Corpo da requisição
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Publicar algo
+      tags:
+      - Publish
 swagger: "2.0"
