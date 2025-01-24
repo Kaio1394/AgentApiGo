@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"AgentApiGo/logger"
 	"AgentApiGo/model"
 	"net/http"
 	"strconv"
@@ -27,6 +28,7 @@ func Publish(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Missing required parameters (host, user, password, port).",
 		})
+		logger.Log.Error("Missing required parameters (host, user, password, port).")
 		return
 	}
 
@@ -35,6 +37,7 @@ func Publish(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid port parameter.",
 		})
+		logger.Log.Error("Invalid port parameter.")
 		return
 	}
 
@@ -51,6 +54,7 @@ func Publish(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Missing required parameters (host, user, password, port).",
 		})
+		logger.Log.Error("Missing required parameters (host, user, password, port).")
 		return
 	}
 
@@ -60,6 +64,7 @@ func Publish(c *gin.Context) {
 			"error":            "Connection error.",
 			"ParamsConnection": rabbit_config,
 		})
+		logger.Log.Error("Connection error.")
 		return
 	}
 
@@ -69,4 +74,5 @@ func Publish(c *gin.Context) {
 		"message": "Publish Job.",
 		"job":     job,
 	})
+	logger.Log.Info("Sended message to queue Job.Schedule.Test")
 }

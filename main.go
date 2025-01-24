@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AgentApiGo/logger"
 	"AgentApiGo/routes"
 
 	"github.com/gin-gonic/gin"
@@ -17,13 +18,20 @@ import (
 // @description This is a sample API to demonstrate Swagger with Gin.
 // @host localhost:8080
 // @BasePath /
+
+var port string
+
 func main() {
+	port = "8080"
+	logger.Log.Info("Start application...")
 	r := gin.Default()
 
+	logger.Log.Info("Calling swagger endpoint.")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	routes.RegisterPingRoutes(r)
 	routes.RegisterPublishRoutes(r)
 
-	r.Run(":8080")
+	logger.Log.Info("Project listening in port " + port)
+	r.Run(":" + port)
 }
