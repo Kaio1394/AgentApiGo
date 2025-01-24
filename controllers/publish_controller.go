@@ -68,7 +68,7 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	rabbit_config.SendMessage(&job, "Job.Schedule.Test", con)
+	rabbit_config.SendMessage(job, "Job.Schedule.Test", con)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Publish Job.",

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"AgentApiGo/logger"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,7 +13,7 @@ import (
 type IRabbit interface {
 	TestConnection() (bool, error)
 	HasEmptyParams() bool
-	SendMessage(job *Job, queue string, con *amqp.Connection) bool
+	SendMessage(message interface{}, queue string, con *amqp.Connection) bool
 	GetStringConnection() string
 	Connection() (*amqp.Connection, error)
 }
@@ -47,8 +48,8 @@ func (r Rabbit) TestConnection() (bool, error) {
 	return true, nil
 }
 
-func (r Rabbit) SendMessage(job *Job, queue string, con *amqp.Connection) bool {
-	jobJSON, err := json.Marshal(job)
+func (r Rabbit) SendMessage(message interface{}, queue string, con *amqp.Connection) bool {
+	jobJSON, err := json.Marshal(message)
 	if err != nil {
 		log.Fatalf("Error in converting Job to JSON: %s", err)
 	}
@@ -60,6 +61,7 @@ func (r Rabbit) SendMessage(job *Job, queue string, con *amqp.Connection) bool {
 	}
 	defer ch.Close()
 
+	logger.Log.Info("Declare queue: " + queue)
 	_, err = ch.QueueDeclare(
 		queue,
 		true,
@@ -86,7 +88,10 @@ func (r Rabbit) SendMessage(job *Job, queue string, con *amqp.Connection) bool {
 	if err != nil {
 		log.Fatalf("Erro ao enviar mensagem: %s", err)
 	}
-	fmt.Println("Send message with successfull!")
+	logger.Log.Info("Send message with successfull!")
+	logger.Log.Info("Message:")
+	logger.Log.Info(message)
+
 	return true
 }
 

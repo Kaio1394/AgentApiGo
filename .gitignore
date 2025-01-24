@@ -67,7 +67,7 @@ project.fragment.lock.json
 artifacts/
 
 # Log
-app.log
+[Ll]ogs
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
