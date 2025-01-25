@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 
 	"github.com/streadway/amqp"
 )
@@ -16,6 +19,7 @@ type IRabbit interface {
 	SendMessage(message interface{}, queue string, con *amqp.Connection) bool
 	GetStringConnection() string
 	Connection() (*amqp.Connection, error)
+	Consumer(queue string, con *amqp.Connection)
 }
 
 type Rabbit struct {
@@ -93,6 +97,60 @@ func (r Rabbit) SendMessage(message interface{}, queue string, con *amqp.Connect
 	logger.Log.Info(message)
 
 	return true
+}
+
+func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
+	defer con.Close()
+
+	ch, err := con.Channel()
+	if err != nil {
+		log.Fatalf("Channel error: %s", err)
+	}
+	defer ch.Close()
+
+	logger.Log.Info("Declare queue: " + queue)
+	_, err = ch.QueueDeclare(
+		queue,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare queue: %s", err)
+	}
+
+	msgs, err := ch.Consume(
+		queue,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+
+	if err != nil {
+		log.Fatalf("Erro ao enviar mensagem: %s", err)
+	}
+
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
+	forever := make(chan bool)
+
+	go func() {
+		for d := range msgs {
+			log.Printf("message received: %v", string(d.Body))
+		}
+	}()
+
+	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	<-sigchan
+
+	log.Printf("interrupted, shutting down")
+	forever <- true
 }
 
 func (r Rabbit) GetStringConnection() string {

@@ -15,6 +15,83 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/consumer": {
+            "post": {
+                "description": "Publishes a job message to RabbitMQ with connection parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Consume"
+                ],
+                "summary": "Consume a job",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ host",
+                        "name": "host",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ port",
+                        "name": "port",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ user",
+                        "name": "user",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ password",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RabbitMQ queue",
+                        "name": "queue",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Job object to publish",
+                        "name": "job",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Job"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Publish success response",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Error response",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "Verifica se a API está ativa",

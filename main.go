@@ -31,6 +31,7 @@ func main() {
 
 	routes.RegisterPingRoutes(r)
 	routes.RegisterPublishRoutes(r)
+	routes.RegisterConsumerRoutes(r)
 
 	logger.Log.Info("Project listening in port " + port)
 	r.Run(":" + port)
