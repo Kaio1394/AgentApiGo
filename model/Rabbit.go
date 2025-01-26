@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"strconv"
 	"syscall"
@@ -141,8 +142,28 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 	forever := make(chan bool)
 
 	go func() {
-		for d := range msgs {
-			log.Printf("message received: %v", string(d.Body))
+		for msg := range msgs {
+			msgStr := string(msg.Body)
+			log.Printf(msgStr)
+			var msgJson map[string]string
+			err := json.Unmarshal([]byte(msgStr), &msgJson)
+			if err != nil {
+				logger.Log.Error("Error in parsing JSON: %s", err)
+			}
+			log.Printf(string(msgJson["server"]))
+
+			if msgJson["server"] == "localhost" && msgJson["cmdExecute"] == "true" {
+				script := msgJson["script"]
+				logger.Log.Info("Executing script: " + script)
+				cmd := exec.Command("cmd", "/C", script)
+				err := cmd.Run()
+				if err != nil {
+					logger.Log.Error("Executing error: %v", err)
+				}
+
+			} else {
+				logger.Log.Info("Not match Server: " + string(msgJson["server"]))
+			}
 		}
 	}()
 
