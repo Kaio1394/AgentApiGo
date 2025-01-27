@@ -10,13 +10,13 @@ import (
 )
 
 func Consumer(c *gin.Context) {
-	host := c.DefaultQuery("host", "")
-	portStr := c.DefaultQuery("port", "")
-	user := c.DefaultQuery("user", "")
-	password := c.DefaultQuery("password", "")
+	server := c.GetHeader("server")
+	portStr := c.GetHeader("port")
+	user := c.GetHeader("user")
+	password := c.GetHeader("password")
 	queue := c.DefaultQuery("queue", "")
 
-	if host == "" || portStr == "" || user == "" || password == "" {
+	if server == "" || portStr == "" || user == "" || password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Missing required parameters (host, user, password, port).",
 		})
@@ -36,7 +36,7 @@ func Consumer(c *gin.Context) {
 	var rabbit_config model.IRabbit
 
 	rabbit_config = model.Rabbit{
-		Host:     host,
+		Host:     server,
 		Port:     uint32(port),
 		User:     user,
 		Password: password,
