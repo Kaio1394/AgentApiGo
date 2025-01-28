@@ -149,15 +149,15 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 			err := json.Unmarshal([]byte(msgStr), &msgJson)
 			if err != nil {
 				logger.Log.Error("Error in parsing JSON: %s", err)
+				return
 			}
-			log.Printf("JSON: " + string(msgJson["server"]))
-			log.Printf("GetIp(): " + GetIp())
 
 			if string(msgJson["server"]) == GetIp() && msgJson["cmdExecute"] == "true" {
 				logger.Log.Info("Date Execution: " + msgJson["dateHour"] + ". Sysdate: " + Sysdate.Format(Layout_date))
 				date, errDate := ConvertDate(msgJson["dateHour"], Layout_date)
 				if errDate != nil {
 					logger.Log.Error("Error to convert date.")
+					return
 				}
 
 				diff := date.Sub(Sysdate)
@@ -168,6 +168,7 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 					err := cmd.Run()
 					if err != nil {
 						logger.Log.Error("Executing error: %v", err)
+						return
 					}
 					logger.Log.Error("Finish execute.")
 
