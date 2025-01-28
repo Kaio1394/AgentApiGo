@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/consumer": {
+        "/consumer/start": {
             "post": {
                 "description": "Publishes a job message to RabbitMQ with connection parameters",
                 "consumes": [
@@ -33,28 +33,28 @@ const docTemplate = `{
                         "type": "string",
                         "description": "RabbitMQ host",
                         "name": "host",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "RabbitMQ port",
                         "name": "port",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "RabbitMQ user",
                         "name": "user",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "RabbitMQ password",
                         "name": "password",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -63,23 +63,16 @@ const docTemplate = `{
                         "name": "queue",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "description": "Job object to publish",
-                        "name": "job",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Job"
-                        }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Publish success response",
+                        "description": "Consumer success",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": true
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {

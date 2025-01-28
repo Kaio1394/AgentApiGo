@@ -23,29 +23,29 @@ info:
   title: AgentApiGo
   version: "1.0"
 paths:
-  /consumer:
+  /consumer/start:
     post:
       consumes:
       - application/json
       description: Publishes a job message to RabbitMQ with connection parameters
       parameters:
       - description: RabbitMQ host
-        in: query
+        in: header
         name: host
         required: true
         type: string
       - description: RabbitMQ port
-        in: query
+        in: header
         name: port
         required: true
         type: string
       - description: RabbitMQ user
-        in: query
+        in: header
         name: user
         required: true
         type: string
       - description: RabbitMQ password
-        in: query
+        in: header
         name: password
         required: true
         type: string
@@ -54,19 +54,14 @@ paths:
         name: queue
         required: true
         type: string
-      - description: Job object to publish
-        in: body
-        name: job
-        required: true
-        schema:
-          $ref: '#/definitions/model.Job'
       produces:
       - application/json
       responses:
         "201":
-          description: Publish success response
+          description: Consumer success
           schema:
-            additionalProperties: true
+            additionalProperties:
+              type: string
             type: object
         "400":
           description: Error response

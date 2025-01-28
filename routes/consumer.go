@@ -12,15 +12,20 @@ import (
 // @Tags Consume
 // @Accept json
 // @Produce json
-// @Param host query string true "RabbitMQ host"
-// @Param port query string true "RabbitMQ port"
-// @Param user query string true "RabbitMQ user"
-// @Param password query string true "RabbitMQ password"
+// @Param host header string true "RabbitMQ host"
+// @Param port header string true "RabbitMQ port"
+// @Param user header string true "RabbitMQ user"
+// @Param password header string true "RabbitMQ password"
 // @Param queue query string true "RabbitMQ queue"
-// @Param job body model.Job true "Job object to publish"
-// @Success 201 {object} map[string]interface{} "Publish success response"
+// @Success 201 {object} map[string]string "Consumer success"
 // @Failure 400 {object} map[string]interface{} "Error response"
-// @Router /consumer [post]
+// @Router /consumer/start [post]
 func RegisterConsumerRoutes(r *gin.Engine) {
 	r.POST("/consumer/start", controllers.Consumer)
 }
+
+// {
+// 	"server": "172.20.240.1",
+// 	"script": "mkdir c:\\temp\\kaio3",
+// 	"cmdExecute": "true"
+//  }

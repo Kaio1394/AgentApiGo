@@ -1,6 +1,7 @@
 package model
 
 import (
+	"AgentApiGo/helper"
 	"AgentApiGo/logger"
 	"encoding/json"
 	"fmt"
@@ -150,17 +151,28 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 			if err != nil {
 				logger.Log.Error("Error in parsing JSON: %s", err)
 			}
-			log.Printf(string(msgJson["server"]))
+			log.Printf("JSON: " + string(msgJson["server"]))
+			log.Printf("GetIp(): " + helper.GetIp())
 
-			if msgJson["server"] == "localhost" && msgJson["cmdExecute"] == "true" {
-				script := msgJson["script"]
-				logger.Log.Info("Executing script: " + script)
-				cmd := exec.Command("cmd", "/C", script)
-				err := cmd.Run()
-				if err != nil {
-					logger.Log.Error("Executing error: %v", err)
+			if string(msgJson["server"]) == helper.GetIp() && msgJson["cmdExecute"] == "true" {
+				logger.Log.Info("Date Execution: " + msgJson["dateHour"] + ". Sysdate: " + Sysdate.Format(Layout_date))
+				date, errDate := ConvertDate(msgJson["dateHour"], Layout_date)
+				if errDate != nil {
+					logger.Log.Error("Error to convert date.")
 				}
 
+				diff := date.Sub(Sysdate)
+				if diff >= -1 || diff <= 1 {
+					script := msgJson["script"]
+					logger.Log.Info("Executing script: " + script)
+					cmd := exec.Command("cmd", "/C", script)
+					err := cmd.Run()
+					if err != nil {
+						logger.Log.Error("Executing error: %v", err)
+					}
+					logger.Log.Error("Finish execute.")
+
+				}
 			} else {
 				logger.Log.Info("Not match Server: " + string(msgJson["server"]))
 			}
