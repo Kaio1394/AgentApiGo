@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"AgentApiGo/helper"
 	"AgentApiGo/logger"
-	"AgentApiGo/model"
 	"net/http"
 	"strconv"
 
@@ -33,9 +33,9 @@ func Consumer(c *gin.Context) {
 		return
 	}
 
-	var rabbit_config model.IRabbit
+	var rabbit_config helper.IRabbit
 
-	rabbit_config = model.Rabbit{
+	rabbit_config = helper.Rabbit{
 		Host:     server,
 		Port:     uint32(port),
 		User:     user,

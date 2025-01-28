@@ -1,7 +1,6 @@
-package model
+package helper
 
 import (
-	"AgentApiGo/helper"
 	"AgentApiGo/logger"
 	"encoding/json"
 	"fmt"
@@ -152,9 +151,9 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 				logger.Log.Error("Error in parsing JSON: %s", err)
 			}
 			log.Printf("JSON: " + string(msgJson["server"]))
-			log.Printf("GetIp(): " + helper.GetIp())
+			log.Printf("GetIp(): " + GetIp())
 
-			if string(msgJson["server"]) == helper.GetIp() && msgJson["cmdExecute"] == "true" {
+			if string(msgJson["server"]) == GetIp() && msgJson["cmdExecute"] == "true" {
 				logger.Log.Info("Date Execution: " + msgJson["dateHour"] + ". Sysdate: " + Sysdate.Format(Layout_date))
 				date, errDate := ConvertDate(msgJson["dateHour"], Layout_date)
 				if errDate != nil {
