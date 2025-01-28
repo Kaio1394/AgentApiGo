@@ -20,12 +20,13 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	host := c.DefaultQuery("host", "")
-	portStr := c.DefaultQuery("port", "")
-	user := c.DefaultQuery("user", "")
-	password := c.DefaultQuery("password", "")
+	server := c.GetHeader("server")
+	portStr := c.GetHeader("port")
+	user := c.GetHeader("user")
+	password := c.GetHeader("password")
+	queue := c.DefaultQuery("queue", "")
 
-	if host == "" || portStr == "" || user == "" || password == "" {
+	if server == "" || portStr == "" || user == "" || password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Missing required parameters (host, user, password, port).",
 		})
@@ -45,7 +46,7 @@ func Publish(c *gin.Context) {
 	var rabbit_config helper.IRabbit
 
 	rabbit_config = helper.Rabbit{
-		Host:     host,
+		Host:     server,
 		Port:     uint32(port),
 		User:     user,
 		Password: password,
@@ -69,7 +70,7 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	rabbit_config.SendMessage(job, "Job.Schedule.Test", con)
+	rabbit_config.SendMessage(job, queue, con)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Publish Job.",

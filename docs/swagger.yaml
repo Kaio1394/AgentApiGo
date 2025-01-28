@@ -2,19 +2,25 @@ basePath: /
 definitions:
   model.Job:
     properties:
+      cmdExecute:
+        type: string
       date:
         type: string
       description:
         type: string
       name:
         type: string
-      priority:
-        type: integer
+      script:
+        type: string
+      server:
+        type: string
     required:
+    - cmdExecute
     - date
     - description
     - name
-    - priority
+    - script
+    - server
     type: object
 host: localhost:8080
 info:

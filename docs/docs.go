@@ -183,12 +183,17 @@ const docTemplate = `{
         "model.Job": {
             "type": "object",
             "required": [
+                "cmdExecute",
                 "date",
                 "description",
                 "name",
-                "priority"
+                "script",
+                "server"
             ],
             "properties": {
+                "cmdExecute": {
+                    "type": "string"
+                },
                 "date": {
                     "type": "string"
                 },
@@ -198,8 +203,11 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "priority": {
-                    "type": "integer"
+                "script": {
+                    "type": "string"
+                },
+                "server": {
+                    "type": "string"
                 }
             }
         }

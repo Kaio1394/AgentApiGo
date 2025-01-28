@@ -2,6 +2,7 @@ package helper
 
 import (
 	"AgentApiGo/logger"
+	"AgentApiGo/model"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -13,6 +14,8 @@ import (
 
 	"github.com/streadway/amqp"
 )
+
+var queue_history string = "Job.Schedule.History"
 
 type IRabbit interface {
 	TestConnection() (bool, error)
@@ -152,9 +155,18 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 				return
 			}
 
-			if string(msgJson["server"]) == GetIp() && msgJson["cmdExecute"] == "true" {
-				logger.Log.Info("Date Execution: " + msgJson["dateHour"] + ". Sysdate: " + Sysdate.Format(Layout_date))
-				date, errDate := ConvertDate(msgJson["dateHour"], Layout_date)
+			job := model.Job{
+				Name:        msgJson["name"],
+				Server:      msgJson["server"],
+				Script:      msgJson["script"],
+				Date:        msgJson["date"],
+				Description: msgJson["description"],
+				CmdExecute:  msgJson["cmdExecute"],
+			}
+
+			if job.Server == GetIp() && job.CmdExecute == "true" {
+				logger.Log.Info("Date Execution: " + job.Date + ". Sysdate: " + Sysdate.Format(Layout_date))
+				date, errDate := ConvertDate(job.Date, Layout_date)
 				if errDate != nil {
 					logger.Log.Error("Error to convert date.")
 					return
@@ -162,7 +174,7 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 
 				diff := date.Sub(Sysdate)
 				if diff >= -1 || diff <= 1 {
-					script := msgJson["script"]
+					script := job.Script
 					logger.Log.Info("Executing script: " + script)
 					cmd := exec.Command("cmd", "/C", script)
 					err := cmd.Run()
@@ -171,10 +183,10 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 						return
 					}
 					logger.Log.Error("Finish execute.")
-
+					r.SendMessage(job, queue_history, con)
 				}
 			} else {
-				logger.Log.Info("Not match Server: " + string(msgJson["server"]))
+				logger.Log.Info("Not match Server: " + job.Server)
 			}
 		}
 	}()

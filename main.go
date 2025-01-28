@@ -13,16 +13,14 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger" // para integrar o Swagger ao Gin
 )
 
+var port string = "8080"
+
 // @title AgentApiGo
 // @version 1.0
 // @description This is a sample API to demonstrate Swagger with Gin.
 // @host localhost:8080
 // @BasePath /
-
-var port string
-
 func main() {
-	port = "8080"
 	logger.Log.Info("Start application...")
 	r := gin.Default()
 

@@ -12,10 +12,10 @@ import (
 // @Tags Publish
 // @Accept json
 // @Produce json
-// @Param host query string true "RabbitMQ host"
-// @Param port query string true "RabbitMQ port"
-// @Param user query string true "RabbitMQ user"
-// @Param password query string true "RabbitMQ password"
+// @Param host header string true "RabbitMQ host"
+// @Param port header string true "RabbitMQ port"
+// @Param user header string true "RabbitMQ user"
+// @Param password header string true "RabbitMQ password"
 // @Param job body model.Job true "Job object to publish"
 // @Success 201 {object} map[string]interface{} "Publish success response"
 // @Failure 400 {object} map[string]interface{} "Error response"
