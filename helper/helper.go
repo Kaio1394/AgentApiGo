@@ -8,10 +8,22 @@ import (
 	"time"
 )
 
-var Layout_date string = "2006-01-02 15:04:05"
-var Sysdate time.Time = GetSysdate()
+type Helper struct {
+}
 
-func GetIp() string {
+func NewHelper() *Helper {
+	return &Helper{}
+}
+
+var Layout_date string
+var Sysdate time.Time
+
+func Init() {
+	Sysdate = time.Now()
+	Layout_date = "2006-01-02 15:04:05"
+}
+
+func (h *Helper) GetIp() string {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		fmt.Println("Erro ao obter endereços:", err)
@@ -26,7 +38,7 @@ func GetIp() string {
 	}
 	return ip
 }
-func GetHost() string {
+func (h *Helper) GetHost() string {
 	host, err := os.Hostname()
 	if err != nil {
 		fmt.Println("Erro ao obter o nome do host:", err)
@@ -35,11 +47,11 @@ func GetHost() string {
 	return host
 }
 
-func GetOperationSystem() string {
+func (h *Helper) GetOperationSystem() string {
 	return runtime.GOOS
 }
 
-func ConvertDate(dateStr string, layout string) (time.Time, error) {
+func (h *Helper) ConvertDate(dateStr string, layout string) (time.Time, error) {
 	var date time.Time
 	convert, err := time.Parse(layout, dateStr)
 	if err != nil {
@@ -49,10 +61,6 @@ func ConvertDate(dateStr string, layout string) (time.Time, error) {
 	return convert, nil
 }
 
-func GetSysdate() time.Time {
-	return time.Now()
-}
-
-func AddDays(date *time.Time, qtyDays int) time.Time {
-	return date.Add(time.Duration(qtyDays) * 24 * time.Hour)
-}
+//func AddDays(date *time.Time, qtyDays int) time.Time {
+//	return date.Add(time.Duration(qtyDays) * 24 * time.Hour)
+//}

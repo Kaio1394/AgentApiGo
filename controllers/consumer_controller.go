@@ -3,11 +3,20 @@ package controllers
 import (
 	"AgentApiGo/helper"
 	"AgentApiGo/logger"
+	"AgentApiGo/service"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
+
+type ConsumerController struct {
+	service *service.ConsumerService
+}
+
+func NewConsumerController(service *service.ConsumerService) *ConsumerController {
+	return &ConsumerController{}
+}
 
 func Consumer(c *gin.Context) {
 	server := c.GetHeader("server")

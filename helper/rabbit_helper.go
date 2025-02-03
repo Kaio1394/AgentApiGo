@@ -105,6 +105,7 @@ func (r Rabbit) SendMessage(message interface{}, queue string, con *amqp.Connect
 
 func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 	defer con.Close()
+	helper := Helper{}
 
 	ch, err := con.Channel()
 	if err != nil {
@@ -164,9 +165,9 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 				CmdExecute:  msgJson["cmdExecute"],
 			}
 
-			if job.Server == GetIp() && job.CmdExecute == "true" {
+			if job.Server == helper.GetIp() && job.CmdExecute == "true" {
 				logger.Log.Info("Date Execution: " + job.Date + ". Sysdate: " + Sysdate.Format(Layout_date))
-				date, errDate := ConvertDate(job.Date, Layout_date)
+				date, errDate := helper.ConvertDate(job.Date, Layout_date)
 				if errDate != nil {
 					logger.Log.Error("Error to convert date.")
 					return
