@@ -156,16 +156,42 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 				return
 			}
 
+			serverId, err := strconv.Atoi(msgJson["serverId"])
+			if err != nil {
+				logger.Log.Error("Error in converting serverId: %s", err)
+				return
+			}
+
+			priority, err := strconv.Atoi(msgJson["priority"])
+			if err != nil {
+				logger.Log.Error("Error in converting serverId: %s", err)
+				return
+			}
+
+			cmdExecute, err := strconv.ParseBool(msgJson["cmdExecute"])
+			if err != nil {
+				logger.Log.Error("Error in converting cmdExecute: %s", err)
+				return
+			}
+
+			Hold, err := strconv.ParseBool(msgJson["Hold"])
+			if err != nil {
+				logger.Log.Error("Error in converting Hold: %s", err)
+				return
+			}
+
 			job := model.Job{
 				Name:        msgJson["name"],
-				Server:      msgJson["server"],
 				Script:      msgJson["script"],
 				Date:        msgJson["date"],
 				Description: msgJson["description"],
-				CmdExecute:  msgJson["cmdExecute"],
+				CmdExecute:  cmdExecute,
+				Hold:        Hold,
+				Priority:    priority,
+				ServerId:    serverId,
 			}
 
-			if job.Server == helper.GetIp() && job.CmdExecute == "true" {
+			if job.CmdExecute && !job.Hold {
 				logger.Log.Info("Date Execution: " + job.Date + ". Sysdate: " + Sysdate.Format(Layout_date))
 				date, errDate := helper.ConvertDate(job.Date, Layout_date)
 				if errDate != nil {
@@ -187,7 +213,7 @@ func (r Rabbit) Consumer(queue string, con *amqp.Connection) {
 					r.SendMessage(job, queue_history, con)
 				}
 			} else {
-				logger.Log.Info("Not match Server: " + job.Server)
+				logger.Log.Info("Not match Server")
 			}
 		}
 	}()
